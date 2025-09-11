@@ -1,0 +1,46 @@
+{
+    "version": 10,
+    "packagePresets": [
+        {
+            "name": "${preset_name}-zip",
+            "configurePreset": "${preset_name}",
+            "generators": [
+                "ZIP"
+            ]
+        },
+        {
+            "name": "${preset_name}-nsis",
+            "configurePreset": "${preset_name}",
+            "generators": [
+                "NSIS64"
+            ]
+        },
+        {
+            "name": "${preset_name}",
+            "configurePreset": "${preset_name}"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "${preset_name}",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "${preset_name}"
+                },
+                {
+                    "type": "build",
+                    "name": "${preset_name}"
+                },
+                {
+                    "type": "test",
+                    "name": "${preset_name}"
+                },
+                {
+                    "type": "package",
+                    "name": "${preset_name}"
+                }
+            ]
+        }
+    ]
+}

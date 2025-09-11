@@ -1,0 +1,12 @@
+[settings]
+os=Windows
+arch=x86_64
+compiler=msvc
+compiler.version=194
+compiler.runtime=dynamic
+compiler.cppstd=23
+
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.cmake.cmake_layout:build_folder_vars=["settings.compiler", "settings.compiler.version", "settings.arch"]
+tools.cmake.cmaketoolchain:extra_variables={"CPACK_GENERATOR": "NSIS64"}
