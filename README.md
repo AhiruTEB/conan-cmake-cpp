@@ -7,7 +7,18 @@ Repository template for a cross-platform project written in C++ with use of Cona
 
 ## ⚙️ How to Use This Template
 
-This repository is a template. To create your own project from it, you need to run the **Configure Project** workflow. This workflow will replace all the placeholder values in the code and documentation with the values you provide.
+This repository is a template. To setup your project from it, you need to run the **Configure Project** workflow. This workflow will replace all the placeholder values in the code and documentation with the values you provide.
+
+### Important Note on Permissions
+
+For the **Configure Project** workflow to successfully create a pull request, you may need to adjust your repository's settings.
+
+1.  Go to your repository's **Settings** tab.
+2.  In the left sidebar, click on **Actions**, then **General**.
+3.  Scroll down to the **Workflow permissions** section.
+4.  Ensure that the checkbox for **Allow GitHub Actions to create and approve pull requests** is checked.
+
+If these settings are not enabled, the workflow will fail with a permission error.
 
 ### Steps to Configure Your Project
 
