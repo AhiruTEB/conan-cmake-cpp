@@ -12,7 +12,7 @@ on:
         required: true
         default: 'A new awesome project.'
       project_homepage_url:
-        description: 'The URL for the project's homepage.'
+        description: "The URL for the project's homepage."
         required: true
         default: 'https://github.com/username/repo'
       cpack_package_contact:
