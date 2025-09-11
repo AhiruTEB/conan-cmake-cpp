@@ -16,9 +16,9 @@ def get_version(conanfile):
         return None
 
 class CraftGLConan(ConanFile):
-    name = "craftgl"
-    url = "https://github.com/LigasN/CraftGL"
-    description = "A simple OpenGL game project."
+    name = "{{PROJECT_NAME_LOWER}}"
+    url = "{{PROJECT_HOMEPAGE_URL}}"
+    description = "{{PROJECT_DESCRIPTION}}"
     license = ""
     settings = "os", "compiler", "build_type", "arch"
 
@@ -28,13 +28,8 @@ class CraftGLConan(ConanFile):
     def validate(self):
         check_min_cppstd(self, "23")
 
-    def requirements(self):
-        self.requires("opengl/system")
-        self.requires("glu/system")
-        self.requires("glm/1.0.1")
-        self.requires("ms-gsl/4.0.0")
-        #self.requires("ktx/4.3.2")
-        #self.requires("nlohmann_json")
+#    def requirements(self):
+#        self.requires("glm/1.0.1")
 
     def build_requirements(self):
         self.test_requires("gtest/1.16.0")

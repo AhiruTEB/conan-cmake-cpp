@@ -13,12 +13,6 @@ function(add_test_target test_name test_sources test_libraries)
     target_link_libraries(${target_name} PRIVATE GTest::gtest_main ${test_libraries})
 
     add_test(NAME ${test_name} COMMAND ${target_name} WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-
-    # TODO: check if needed
-    # Set output directory for test executables (optional, but good for organization)
-    # set_target_properties(${TARGET_NAME} PROPERTIES
-        # RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
-    # )
 endfunction()
 
 add_test_target(engine "engine/Engine.cpp" "")

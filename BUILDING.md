@@ -1,6 +1,6 @@
 # Building and Running the Project (Conan 2.x with CMake Presets)
 
-This document provides instructions for building and running the project using **Conan 2.x** and **CMake Presets**. This approach simplifies the build process by defining all build configurations in a single `CMakePresets.json` file.
+This document provides instructions for building and running the project using **Conan 2.x** and **CMake Presets**. This approach simplifies the build process.
 
 ### Prerequisites
 
@@ -19,81 +19,47 @@ choco install conan cmake ninja llvm
 
 * **Linux**:
 ```bash
-sudo apt install conan cmake ninja-build clang clang-format clang-tidy libglu1-mesa-dev freeglut3-dev
+sudo apt install conan cmake ninja-build clang clang-format clang-tidy
 ```
 
 ### Step-by-Step Instructions
-TODO: There are also scripts that run generation phase accordingly for Windows system `configure.cmd` script and for Linux `configure.sh`.
+There are also scripts that run generation phase accordingly for Windows system `configure.cmd` and for Linux `configure.sh`.
 
 #### 1. Generate the Conan Toolchain and Dependencies
-This step uses Conan to download all project dependencies and generate the conan_toolchain.cmake file that CMake needs.
+This step uses Conan to download all project dependencies and generate the conan_toolchain.cmake file that CMake needs. This is an example, parameters like profile used or build type can be changed.
 
 * **Windows**:
 ```batch
-conan install . --output-folder=build/windows-clang-release --build=missing -pr:h=profiles/windows-clang -pr:b=profiles/windows-clang
+conan install . -pr:a=profiles/windows-clang -s build_type=Release --build=missing
 ```
 
 * **Linux**:
 ```bash
-conan install . --output-folder=build/linux-clang-release --build=missing -pr:h=profiles/linux-clang -pr:b=profiles/linux-clang
+conan install . -pr:a=profiles/linux-clang -s build_type=Release --build=missing
 ```
 
-This command will create the build directory and populate it with Conan's toolchain file and other necessary configuration.
-
-#### 2. Configure the Project
-
-The `cmake --preset` command will automatically resolve and install all project dependencies using Conan. It will create a build directory and generate the necessary files for building.
-
-* **Windows**:
-```batch
-cmake --preset windows-clang-release
-```
-
-* **Linux**:
-```bash
-cmake --preset linux-clang-release
-```
-
-After this command, a new directory, `build/linux-clang-release` or `build/windows-clang-release`, will be created containing the build configuration.
+This command will create the build directory and populate it with Conan's toolchain file and other necessary configuration. Also `CMakeUserPresets.json` and `compile_commands.json` files will be generated.
 
 #### 2. Build the Project
 
-Once the project is configured, you can build it using the same preset name.
-
-* **Linux**:
-```
-cmake --build --preset linux-clang-release
-```
+Once the project is configured, you can build it using the same profile. This is an example, parameters like profile used or build type can be changed.
 
 * **Windows**:
 ```
-cmake --build --preset windows-clang-release
+conan build . -pr:a=%PROFILE% -s build_type=Release --build=missing 
+```
+
+* **Linux**:
+```
+conan build . -pr:a=%PROFILE% -s build_type=Release --build=missing 
 ```
 
 This will compile your source code and produce the final executable.
 
 #### 3. Run the Executable
 
-The executable is located inside the build directory. The exact name of the executable will depend on your `CMakeLists.txt` configuration.
+The executable is located inside the build directory. The exact path to the executable will depend on choosen profile and build type.
 
-* **Linux**:
 ```
-./build/linux-clang-release/your_executable_name
+./build/{compiler-compiler_version-arch"}/{{PROJECT_NAME}}.exe
 ```
-
-* **Windows**:
-```
-`./build/windows-clang-release/your_executable_name.exe
-```
-
-### How It Works
-
-The `cmake --preset` command is the key to this workflow. It tells CMake to:
-
-1. Read the configuration specified in the `CMakePresets.json` file.
-
-2. Automatically invoke Conan to download all the dependencies defined in your `conanfile.py`.
-
-3. Set up the build environment with Conan's toolchain file, ensuring that the compiler, C++ standard, and other settings are correctly configured for your chosen preset.
-
-This eliminates the need to run manual `conan install` and `cmake -DCMAKE_TOOLCHAIN_FILE=...` commands separately, creating a single, consistent entry point for building your project.
