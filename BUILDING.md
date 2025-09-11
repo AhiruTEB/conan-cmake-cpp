@@ -61,5 +61,5 @@ This will compile your source code and produce the final executable.
 The executable is located inside the build directory. The exact path to the executable will depend on choosen profile and build type.
 
 ```
-./build/{compiler-compiler_version-arch"}/{{PROJECT_NAME}}.exe
+./build/{compiler-compiler_version-arch"}/{{PROJECT_NAME_LOWER}}.exe
 ```
