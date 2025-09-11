@@ -1,0 +1,64 @@
+name: Configure Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      new_project_name:
+        description: 'The new name for the project.'
+        required: true
+        default: 'New Project Name'
+      project_description:
+        description: 'A short description of the project.'
+        required: true
+        default: 'A new awesome project.'
+      project_homepage_url:
+        description: 'The URL for the project's homepage.'
+        required: true
+        default: 'https://github.com/username/repo'
+      cpack_package_contact:
+        description: 'The contact email for the project.'
+        required: true
+        default: 'user@example.com'
+
+jobs:
+  configure_project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Set project name variables
+        id: set-variables
+        run: |
+          # Convert the project name to snake_case for use in filenames and other contexts.
+          PROJECT_NAME_LOWER=$(echo "${{ github.event.inputs.new_project_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
+          echo "project_name_lower=$PROJECT_NAME_LOWER" >> $GITHUB_OUTPUT
+
+      - name: Replace project name placeholders
+        run: |
+          # This command finds all files and uses 'sed' to replace all the placeholders.
+          # The sed delimiter is changed from '/' to '|' to safely handle path names.
+          find . -type f -not -path './.git/*' -exec sed -i \
+            -e "s|{{PROJECT_NAME}}|${{ github.event.inputs.new_project_name }}|g" \
+            -e "s|{{PROJECT_NAME_LOWER}}|${{ steps.set-variables.outputs.project_name_lower }}|g" \
+            -e "s|{{PROJECT_DESCRIPTION}}|${{ github.event.inputs.project_description }}|g" \
+            -e "s|{{PROJECT_HOMEPAGE_URL}}|${{ github.event.inputs.project_homepage_url }}|g" \
+            -e "s|{{CPACK_PACKAGE_CONTACT}}|${{ github.event.inputs.cpack_package_contact }}|g" \
+            -e "s|{{USERNAME}}|${{ github.actor }}|g" \
+            {} +
+      
+      - name: Create a pull request with the new name
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: 'Update project name to "${{ github.event.inputs.new_project_name }}"'
+          commit-message: 'feat: Update project name to ${{ github.event.inputs.new_project_name }}'
+          body: |
+            This pull request automatically updates all instances of the project name
+            placeholder (`{{PROJECT_NAME}}`) and other related placeholders with the new information you provided.
+          branch: update-project-name-${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
