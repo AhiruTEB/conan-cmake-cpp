@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       new_project_name:
-        description: 'The new name for the project.'
+        description: 'The name for the new project.'
         required: true
         default: 'New Project Name'
       project_description:
@@ -35,14 +35,14 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-      - name: Set project name variables
+      - name: Set project variables
         id: set-variables
         run: |
           # Convert the project name to snake_case for use in filenames and other contexts.
           PROJECT_NAME_LOWER=$(echo "${{ github.event.inputs.new_project_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
           echo "project_name_lower=$PROJECT_NAME_LOWER" >> $GITHUB_OUTPUT
 
-      - name: Replace project name placeholders
+      - name: Replace project template placeholders
         run: |
           # This command finds all files and uses 'sed' to replace all the placeholders.
           # The sed delimiter is changed from '/' to '|' to safely handle path names.
@@ -54,13 +54,22 @@ jobs:
             -e "s|{{CPACK_PACKAGE_CONTACT}}|${{ github.event.inputs.cpack_package_contact }}|g" \
             {} +
       
-      - name: Create a pull request with the new name
+      - name: Remove template-specific files and instructions
+        run: |
+          rm -f UNLICENSE
+          LINE=$(grep -n -m 1 "^---" README.md | cut -d: -f1)
+          if [ -n "$LINE" ]; then
+            if tail -n +$LINE README.md | grep -q "## ⚙️ How to Use This Template"; then
+              sed -i "$LINE,\$d" README.md
+            fi
+          fi
+
+      - name: Create a pull request with configured project
         uses: peter-evans/create-pull-request@v6
         with:
-          title: 'Update project name to "${{ github.event.inputs.new_project_name }}"'
-          commit-message: 'feat: Update project name to ${{ github.event.inputs.new_project_name }}'
+          title: 'feat: Configure project from template'
+          commit-message: 'feat: Configure project from template'
           body: |
-            This pull request automatically updates all instances of the project name
-            placeholder (`{{PROJECT_NAME}}`) and other related placeholders with the new information you provided.
-          branch: update-project-name-${{ github.run_number }}
+            This pull request configures the project from the template with the information you provided.
+          branch: configure-project-${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
