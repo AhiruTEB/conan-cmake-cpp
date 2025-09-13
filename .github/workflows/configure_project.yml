@@ -77,8 +77,8 @@ jobs:
       - name: Create a pull request with configured project
         uses: peter-evans/create-pull-request@v6
         with:
-          title: 'feat: Configure project from template'
-          commit-message: 'feat: Configure project from template'
+          title: 'Configure project from template'
+          commit-message: 'Configure project from template'
           body: |
             This pull request configures the project from the template with the information you provided.
           branch: configure-project-${{ github.run_number }}
