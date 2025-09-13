@@ -59,13 +59,13 @@ jobs:
           # This command finds all files and uses 'sed' to replace all the placeholders.
           # The sed delimiter is changed from '/' to '|' to safely handle path names.
           find . -type f -not -path './.git/*' -not -path './.github/workflows/*' -exec sed -i \
-            -e "s|{{PROJECT_NAME}}|${{ github.event.inputs.new_project_name }}|g"
-            -e "s|{{PROJECT_NAME_LOWER}}|${{ steps.set-variables.outputs.project_name_lower }}|g"
-            -e "s|{{PROJECT_NAME_CAMEL}}|${{ steps.set-variables.outputs.project_name_camel }}|g"
-            -e "s|{{PROJECT_DESCRIPTION}}|${{ github.event.inputs.project_description }}|g"
-            -e "s|{{PROJECT_REPOSITORY_URL}}|${{ github.server_url }}/${{ github.repository }}|g"
-            -e "s|{{PROJECT_HOMEPAGE_URL}}|${{ steps.set-url.outputs.homepage_url }}|g"
-            -e "s|{{CPACK_PACKAGE_CONTACT}}|${{ github.event.inputs.cpack_package_contact }}|g"
+            -e "s|{{PROJECT_NAME}}|${{ github.event.inputs.new_project_name }}|g" \
+            -e "s|{{PROJECT_NAME_LOWER}}|${{ steps.set-variables.outputs.project_name_lower }}|g" \
+            -e "s|{{PROJECT_NAME_CAMEL}}|${{ steps.set-variables.outputs.project_name_camel }}|g" \
+            -e "s|{{PROJECT_DESCRIPTION}}|${{ github.event.inputs.project_description }}|g" \
+            -e "s|{{PROJECT_REPOSITORY_URL}}|${{ github.server_url }}/${{ github.repository }}|g" \
+            -e "s|{{PROJECT_HOMEPAGE_URL}}|${{ steps.set-url.outputs.homepage_url }}|g" \
+            -e "s|{{CPACK_PACKAGE_CONTACT}}|${{ github.event.inputs.cpack_package_contact }}|g" \
             {} +
       
       - name: Remove template-specific files and instructions
