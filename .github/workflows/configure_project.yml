@@ -11,14 +11,14 @@ on:
         description: 'A short description of the project.'
         required: true
         default: 'A new awesome project.'
-      project_homepage_url:
-        description: "The URL for the project's GitHub homepage."
-        required: true
-        default: 'https://github.com/username/repo'
       cpack_package_contact:
         description: 'The contact email for the project.'
         required: true
         default: 'user@example.com'
+      project_homepage_url:
+        description: "The URL for the project's homepage. Leave empty to use the repository URL."
+        required: false
+        default: 'Leave empty to use repository URL'
 
 jobs:
   configure_project:
@@ -42,6 +42,15 @@ jobs:
           PROJECT_NAME_LOWER=$(echo "${{ github.event.inputs.new_project_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
           echo "project_name_lower=$PROJECT_NAME_LOWER" >> $GITHUB_OUTPUT
 
+      - name: Set homepage URL
+        id: set-url
+        run: |
+          if [ "${{ github.event.inputs.project_homepage_url }}" = "Leave empty to use repository URL" ] || [ -z "${{ github.event.inputs.project_homepage_url }}" ]; then
+            echo "homepage_url=${{ github.server_url }}/${{ github.repository }}" >> $GITHUB_OUTPUT
+          else
+            echo "homepage_url=${{ github.event.inputs.project_homepage_url }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Replace project template placeholders
         run: |
           # This command finds all files and uses 'sed' to replace all the placeholders.
@@ -50,7 +59,8 @@ jobs:
             -e "s|{{PROJECT_NAME}}|${{ github.event.inputs.new_project_name }}|g" \
             -e "s|{{PROJECT_NAME_LOWER}}|${{ steps.set-variables.outputs.project_name_lower }}|g" \
             -e "s|{{PROJECT_DESCRIPTION}}|${{ github.event.inputs.project_description }}|g" \
-            -e "s|{{PROJECT_HOMEPAGE_URL}}|${{ github.event.inputs.project_homepage_url }}|g" \
+            -e "s|{{PROJECT_REPOSITORY_URL}}|${{ github.server_url }}/${{ github.repository }}|g" \
+            -e "s|{{PROJECT_HOMEPAGE_URL}}|${{ steps.set-url.outputs.homepage_url }}|g" \
             -e "s|{{CPACK_PACKAGE_CONTACT}}|${{ github.event.inputs.cpack_package_contact }}|g" \
             {} +
       
