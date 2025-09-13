@@ -44,7 +44,7 @@ if(ENABLE_CPPCHECK)
             COMMENT "Running cppcheck analysis on the entire project..."
         )
 
-        add_dependencies(static_analysis_cppcheck craftgl)
+        add_dependencies(static_analysis_cppcheck ${PROJECT_NAME})
     else()
         message(WARNING "Cppcheck not found. Static analysis target for cppcheck will be not created nor run.")
     endif()

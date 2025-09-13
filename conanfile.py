@@ -15,7 +15,7 @@ def get_version(conanfile):
     except Exception as e:
         return None
 
-class CraftGLConan(ConanFile):
+class {{PROJECT_NAME_CAMEL}}Conan(ConanFile):
     name = "{{PROJECT_NAME_LOWER}}"
     url = "{{PROJECT_HOMEPAGE_URL}}"
     description = "{{PROJECT_DESCRIPTION}}"

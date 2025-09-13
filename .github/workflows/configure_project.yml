@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       new_project_name:
-        description: 'The name for the new project.'
+        description: 'The name for the project.'
         required: true
-        default: 'New Project Name'
+        default: 'My Awesome Project'
       project_description:
         description: 'A short description of the project.'
         required: true
@@ -41,6 +41,9 @@ jobs:
           # Convert the project name to snake_case for use in filenames and other contexts.
           PROJECT_NAME_LOWER=$(echo "${{ github.event.inputs.new_project_name }}" | tr '[:upper:]' '[:lower:]' | tr ' ' '_')
           echo "project_name_lower=$PROJECT_NAME_LOWER" >> $GITHUB_OUTPUT
+          # Convert the project name to CamelCase for use in class names.
+          PROJECT_NAME_CAMEL=$(echo "${{ github.event.inputs.new_project_name }}" | sed -e 's/\b\(.\)/\u\1/g' -e 's/ //g')
+          echo "project_name_camel=$PROJECT_NAME_CAMEL" >> $GITHUB_OUTPUT
 
       - name: Set homepage URL
         id: set-url
@@ -56,12 +59,13 @@ jobs:
           # This command finds all files and uses 'sed' to replace all the placeholders.
           # The sed delimiter is changed from '/' to '|' to safely handle path names.
           find . -type f -not -path './.git/*' -not -path './.github/workflows/*' -exec sed -i \
-            -e "s|{{PROJECT_NAME}}|${{ github.event.inputs.new_project_name }}|g" \
-            -e "s|{{PROJECT_NAME_LOWER}}|${{ steps.set-variables.outputs.project_name_lower }}|g" \
-            -e "s|{{PROJECT_DESCRIPTION}}|${{ github.event.inputs.project_description }}|g" \
-            -e "s|{{PROJECT_REPOSITORY_URL}}|${{ github.server_url }}/${{ github.repository }}|g" \
-            -e "s|{{PROJECT_HOMEPAGE_URL}}|${{ steps.set-url.outputs.homepage_url }}|g" \
-            -e "s|{{CPACK_PACKAGE_CONTACT}}|${{ github.event.inputs.cpack_package_contact }}|g" \
+            -e "s|{{PROJECT_NAME}}|${{ github.event.inputs.new_project_name }}|g"
+            -e "s|{{PROJECT_NAME_LOWER}}|${{ steps.set-variables.outputs.project_name_lower }}|g"
+            -e "s|{{PROJECT_NAME_CAMEL}}|${{ steps.set-variables.outputs.project_name_camel }}|g"
+            -e "s|{{PROJECT_DESCRIPTION}}|${{ github.event.inputs.project_description }}|g"
+            -e "s|{{PROJECT_REPOSITORY_URL}}|${{ github.server_url }}/${{ github.repository }}|g"
+            -e "s|{{PROJECT_HOMEPAGE_URL}}|${{ steps.set-url.outputs.homepage_url }}|g"
+            -e "s|{{CPACK_PACKAGE_CONTACT}}|${{ github.event.inputs.cpack_package_contact }}|g"
             {} +
       
       - name: Remove template-specific files and instructions
